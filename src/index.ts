@@ -73,19 +73,30 @@ function sleep(ms: number): Promise<void> {
 }
 
 const rl = createInterface({ input: process.stdin });
+let pending = 0;
+let closing = false;
 
 rl.on("line", async (line) => {
   const trimmed = line.trim();
   if (!trimmed) return;
 
+  pending++;
   const response = await forward(trimmed);
   if (response) {
     process.stdout.write(response + "\n");
   }
+  pending--;
+
+  if (closing && pending === 0) {
+    process.exit(0);
+  }
 });
 
 rl.on("close", () => {
-  process.exit(0);
+  closing = true;
+  if (pending === 0) {
+    process.exit(0);
+  }
 });
 
 console.error(`Nitrosend MCP bridge started (${apiUrl})`);
