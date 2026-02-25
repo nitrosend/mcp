@@ -10,7 +10,7 @@ export function getApiKey(): string {
         "  export NITROSEND_API_KEY=nskey_live_...\n\n" +
         "Get your key at: https://nitrosend.com/settings/api-keys\n\n" +
         "Or pass it when adding the server:\n" +
-        "  claude mcp add nitro -e NITROSEND_API_KEY=nskey_live_... -- npx -y nitrosend-mcp"
+        "  claude mcp add nitro -e NITROSEND_API_KEY=nskey_live_... -- npx -y @nitrosend/mcp"
     );
     process.exit(1);
   }

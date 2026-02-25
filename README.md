@@ -1,4 +1,4 @@
-# nitrosend-mcp
+# @nitrosend/mcp
 
 MCP server for [Nitrosend](https://nitrosend.com) — connect Claude to your email marketing platform.
 
@@ -7,7 +7,7 @@ Manage contacts, compose emails, build automated flows, and launch campaigns thr
 ## Install
 
 ```bash
-claude mcp add nitro -e NITROSEND_API_KEY=nskey_live_... -- npx -y nitrosend-mcp
+claude mcp add nitro -e NITROSEND_API_KEY=nskey_live_... -- npx -y @nitrosend/mcp
 ```
 
 ## Get your API key
