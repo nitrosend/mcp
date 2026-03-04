@@ -27,13 +27,13 @@ export function getAuthConfig(): AuthConfig {
 
   console.error(
     "Error: No authentication credentials set.\n\n" +
-      "Option 1 — API key:\n" +
-      "  export NITROSEND_API_KEY=nskey_live_...\n" +
-      "  Get your key at: https://nitrosend.com/settings/api-keys\n\n" +
-      "Option 2 — OAuth bearer token (after completing popup auth):\n" +
-      "  export NITROSEND_BEARER_TOKEN=<your_oauth_access_token>\n\n" +
-      "Or pass credentials when adding the server:\n" +
-      "  claude mcp add nitro -e NITROSEND_API_KEY=nskey_live_... -- npx -y @nitrosend/mcp"
+      "Set your API key:\n" +
+      "  export NITROSEND_API_KEY=nskey_live_...\n\n" +
+      "Or pass it when adding the server:\n" +
+      "  claude mcp add nitro -e NITROSEND_API_KEY=nskey_live_... -- npx -y @nitrosend/mcp\n\n" +
+      "Get your key at: https://nitrosend.com/settings/api-keys\n\n" +
+      "Tip: Claude Code users can connect via OAuth instead — no API key needed:\n" +
+      "  claude mcp add --transport http nitrosend https://api.nitrosend.com/mcp"
   );
   process.exit(1);
 }
