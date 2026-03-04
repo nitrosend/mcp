@@ -30,10 +30,8 @@ export function getAuthConfig(): AuthConfig {
       "Set your API key:\n" +
       "  export NITROSEND_API_KEY=nskey_live_...\n\n" +
       "Or pass it when adding the server:\n" +
-      "  claude mcp add nitro -e NITROSEND_API_KEY=nskey_live_... -- npx -y @nitrosend/mcp\n\n" +
-      "Get your key at: https://nitrosend.com/settings/api-keys\n\n" +
-      "Tip: Claude Code users can connect via OAuth instead — no API key needed:\n" +
-      "  claude mcp add --transport http nitrosend https://api.nitrosend.com/mcp"
+      "  npx -y @nitrosend/mcp with NITROSEND_API_KEY=nskey_live_... in your env config\n\n" +
+      "Get your key at: https://nitrosend.com/settings/api-keys"
   );
   process.exit(1);
 }
