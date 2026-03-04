@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import { createInterface } from "node:readline";
-import { getApiKey, getApiUrl } from "./auth.js";
+import { getAuthConfig, getApiUrl } from "./auth.js";
 
-const apiKey = getApiKey();
+const { token, mode } = getAuthConfig();
 const apiUrl = getApiUrl();
 
 const RETRY_DELAYS = [100, 300];
@@ -17,7 +17,7 @@ async function forward(line: string): Promise<string> {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
+          Authorization: `Bearer ${token}`,
         },
         body: line,
       });
@@ -33,7 +33,10 @@ async function forward(line: string): Promise<string> {
 
       // 401/403 — don't retry auth errors
       if (res.status === 401 || res.status === 403) {
-        console.error(`Auth error (${res.status}): Check your NITROSEND_API_KEY`);
+        const authHint = mode === "bearer"
+          ? "Check your NITROSEND_BEARER_TOKEN (may be expired — re-authenticate via OAuth)"
+          : "Check your NITROSEND_API_KEY";
+        console.error(`Auth error (${res.status}): ${authHint}`);
         return jsonRpcError(-32000, `Authentication failed (${res.status})`);
       }
 
@@ -99,4 +102,4 @@ rl.on("close", () => {
   }
 });
 
-console.error(`Nitrosend MCP bridge started (${apiUrl})`);
+console.error(`Nitrosend MCP bridge started (${apiUrl}, auth=${mode})`);

@@ -1,24 +1,142 @@
 # @nitrosend/mcp
 
-MCP server for [Nitrosend](https://nitrosend.com) — connect Claude to your email marketing platform.
+MCP server for [Nitrosend](https://nitrosend.com) — connect any AI agent to your email marketing platform.
 
 Manage contacts, compose emails, build automated flows, and launch campaigns through natural language.
 
-## Install
+---
 
-```bash
-claude mcp add nitro -e NITROSEND_API_KEY=nskey_live_... -- npx -y @nitrosend/mcp
+## Setup by client
+
+### Claude Code
+
+No API key needed. Claude Code handles sign-in automatically via OAuth.
+
+Add to `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "nitrosend": {
+      "type": "http",
+      "url": "https://api.nitrosend.com/mcp"
+    }
+  }
+}
 ```
 
-## Get your API key
+Or via CLI:
 
-1. Log in at [nitrosend.com](https://nitrosend.com)
-2. Go to **Settings > API Keys**
-3. Copy your live key (starts with `nskey_live_`)
+```bash
+claude mcp add --transport http nitrosend https://api.nitrosend.com/mcp
+```
+
+---
+
+### Cursor
+
+**API key** — add to `.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "nitrosend": {
+      "command": "npx",
+      "args": ["-y", "@nitrosend/mcp"],
+      "env": {
+        "NITROSEND_API_KEY": "nskey_live_..."
+      }
+    }
+  }
+}
+```
+
+**OAuth** — use `mcp-remote` as a proxy:
+
+```json
+{
+  "mcpServers": {
+    "nitrosend": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://api.nitrosend.com/mcp"]
+    }
+  }
+}
+```
+
+---
+
+### Claude.ai (web + mobile)
+
+Go to **Settings → Connectors → Add custom connector** and enter:
+
+```text
+https://api.nitrosend.com/mcp
+```
+
+---
+
+### Windsurf
+
+Add to `~/.codeium/windsurf/mcp_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "nitrosend": {
+      "command": "npx",
+      "args": ["-y", "@nitrosend/mcp"],
+      "env": {
+        "NITROSEND_API_KEY": "nskey_live_..."
+      }
+    }
+  }
+}
+```
+
+---
+
+### Zed
+
+Add to Zed settings under `context_servers`:
+
+```json
+{
+  "context_servers": {
+    "nitrosend": {
+      "command": {
+        "path": "npx",
+        "args": ["-y", "@nitrosend/mcp"],
+        "env": {
+          "NITROSEND_API_KEY": "nskey_live_..."
+        }
+      }
+    }
+  }
+}
+```
+
+---
+
+### Any other MCP client
+
+```json
+{
+  "command": "npx",
+  "args": ["-y", "@nitrosend/mcp"],
+  "env": {
+    "NITROSEND_API_KEY": "nskey_live_..."
+  }
+}
+```
+
+Get your API key at **nitrosend.com → Settings → API Keys**.
+
+---
 
 ## What you can do
 
-Once connected, Claude can:
+Once connected, your agent can:
 
 - **Read** — query contacts, segments, flows, campaigns, and account status
 - **Compose** — create emails with sections, build multi-step flows, set up campaigns
@@ -28,10 +146,11 @@ Once connected, Claude can:
 
 ## Environment variables
 
-| Variable | Required | Description |
-|---|---|---|
-| `NITROSEND_API_KEY` | Yes | Your API key (`nskey_live_...`) |
-| `NITROSEND_API_URL` | No | Override API endpoint (defaults to `https://api.nitrosend.com/mcp`) |
+| Variable | Description |
+| --- | --- |
+| `NITROSEND_API_KEY` | API key (`nskey_live_...`) — for stdio transport |
+| `NITROSEND_BEARER_TOKEN` | OAuth bearer token — alternative to API key |
+| `NITROSEND_API_URL` | Override API endpoint (default: `https://api.nitrosend.com/mcp`) |
 
 ## Requirements
 
