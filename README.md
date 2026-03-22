@@ -8,11 +8,15 @@ Manage contacts, compose emails, build automated flows, and launch campaigns thr
 
 ## Setup by client
 
+Most clients support OAuth — sign in via your browser, no API keys needed.
+
 ### Claude Code
 
-No API key needed. Claude Code handles sign-in automatically via OAuth.
+```bash
+claude mcp add --transport http nitrosend https://api.nitrosend.com/mcp
+```
 
-Add to `.mcp.json`:
+Or add to `.mcp.json`:
 
 ```json
 {
@@ -25,43 +29,16 @@ Add to `.mcp.json`:
 }
 ```
 
-Or via CLI:
-
-```bash
-claude mcp add --transport http nitrosend https://api.nitrosend.com/mcp
-```
+OAuth sign-in happens automatically on first use.
 
 ---
 
-### Cursor
+### Claude Desktop
 
-**API key** — add to `.cursor/mcp.json`:
+Go to **Settings → MCP Servers → Add** and select **Streamable HTTP** transport:
 
-```json
-{
-  "mcpServers": {
-    "nitrosend": {
-      "command": "npx",
-      "args": ["-y", "@nitrosend/mcp"],
-      "env": {
-        "NITROSEND_API_KEY": "nskey_live_..."
-      }
-    }
-  }
-}
-```
-
-**OAuth** — use `mcp-remote` as a proxy:
-
-```json
-{
-  "mcpServers": {
-    "nitrosend": {
-      "command": "npx",
-      "args": ["-y", "mcp-remote", "https://api.nitrosend.com/mcp"]
-    }
-  }
-}
+```text
+https://api.nitrosend.com/mcp
 ```
 
 ---
@@ -76,6 +53,44 @@ https://api.nitrosend.com/mcp
 
 ---
 
+### Cursor
+
+Add to `.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "nitrosend": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://api.nitrosend.com/mcp"]
+    }
+  }
+}
+```
+
+Cursor opens your browser to sign in on first use via `mcp-remote`.
+
+---
+
+### VS Code (Copilot)
+
+Add to `.vscode/mcp.json`:
+
+```json
+{
+  "servers": {
+    "nitrosend": {
+      "type": "http",
+      "url": "https://api.nitrosend.com/mcp"
+    }
+  }
+}
+```
+
+VS Code handles OAuth automatically via its built-in MCP auth flow.
+
+---
+
 ### Windsurf
 
 Add to `~/.codeium/windsurf/mcp_config.json`:
@@ -84,21 +99,37 @@ Add to `~/.codeium/windsurf/mcp_config.json`:
 {
   "mcpServers": {
     "nitrosend": {
-      "command": "npx",
-      "args": ["-y", "@nitrosend/mcp"],
-      "env": {
-        "NITROSEND_API_KEY": "nskey_live_..."
-      }
+      "serverUrl": "https://api.nitrosend.com/mcp"
     }
   }
 }
 ```
 
+Windsurf supports OAuth natively for HTTP servers — sign in via your browser on first use.
+
+---
+
+### Codex CLI
+
+```bash
+codex mcp add nitrosend --url https://api.nitrosend.com/mcp
+codex mcp login nitrosend
+```
+
+Or add to `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.nitrosend]
+url = "https://api.nitrosend.com/mcp"
+```
+
+Then run `codex mcp login nitrosend` to authenticate via OAuth.
+
 ---
 
 ### Zed
 
-Add to Zed settings under `context_servers`:
+Zed only supports stdio transport — use `mcp-remote` to bridge:
 
 ```json
 {
@@ -106,10 +137,7 @@ Add to Zed settings under `context_servers`:
     "nitrosend": {
       "command": {
         "path": "npx",
-        "args": ["-y", "@nitrosend/mcp"],
-        "env": {
-          "NITROSEND_API_KEY": "nskey_live_..."
-        }
+        "args": ["-y", "mcp-remote", "https://api.nitrosend.com/mcp"]
       }
     }
   }
@@ -119,6 +147,14 @@ Add to Zed settings under `context_servers`:
 ---
 
 ### Any other MCP client
+
+**If your client supports HTTP/SSE transport**, point it at:
+
+```text
+https://api.nitrosend.com/mcp
+```
+
+**If your client only supports stdio**, use the bridge with an API key:
 
 ```json
 {
