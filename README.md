@@ -166,7 +166,7 @@ https://api.nitrosend.com/mcp
 }
 ```
 
-Get your API key at **nitrosend.com → Settings → API Keys**.
+Get your API key at **[Settings → API Keys](https://app.nitrosend.com/my/settings/api-keys)** in the Nitrosend dashboard.
 
 ---
 
