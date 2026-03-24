@@ -1,7 +1,8 @@
 {
   "name": "@nitrosend/mcp",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "MCP server for Nitrosend — connect Claude to your email marketing platform",
+  "mcpName": "com.nitrosend/nitrosend",
   "license": "MIT",
   "type": "module",
   "bin": {
