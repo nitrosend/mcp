@@ -1,9 +1,9 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.nitrosend/mcp",
+  "name": "io.github.CosmoBlk/nitrosend-mcp",
   "title": "Nitrosend",
   "description": "Connect Claude to Nitrosend to manage contacts, compose emails, build flows, and launch campaigns",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "websiteUrl": "https://nitrosend.com",
   "repository": {
     "url": "https://github.com/nitrosend/mcp",
@@ -15,7 +15,7 @@
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@nitrosend/mcp",
-      "version": "0.6.2",
+      "version": "0.6.3",
       "transport": {
         "type": "stdio"
       },
