@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.CosmoBlk/nitrosend-mcp",
   "title": "Nitrosend",
-  "description": "Connect Claude to Nitrosend to manage contacts, compose emails, build flows, and launch campaigns",
+  "description": "AI-native email marketing platform built for agents like Claude, ChatGPT and Codex. Craft beautiful email campaigns, manage contacts, build automation flows, handle transactional email, and track performance.",
   "version": "0.6.3",
   "websiteUrl": "https://nitrosend.com",
   "repository": {

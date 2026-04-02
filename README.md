@@ -1,8 +1,8 @@
 # @nitrosend/mcp
 
-MCP server for [Nitrosend](https://nitrosend.com) — connect any AI agent to your email marketing platform.
+AI-native email marketing platform built for agents like Claude, ChatGPT and Codex. Craft beautiful email campaigns, manage contacts, build automation flows, handle transactional email, and track performance — all through prompts to your AI Agent. Reduce hours of email overhead to minutes by having Claude manage it.
 
-Manage contacts, compose emails, build automated flows, and launch campaigns through natural language.
+Supports campaigns, audience segmentation, welcome sequences, drip flows, templates, and deliverability analytics. No dashboard required.
 
 ---
 
