@@ -1,6 +1,6 @@
 # @nitrosend/mcp
 
-MCP server for [Nitrosend](https://nitrosend.com) — connect any AI agent to your email marketing platform.
+Optional stdio bridge for [Nitrosend](https://nitrosend.com). Most clients should connect directly to Nitrosend's remote MCP server at `https://api.nitrosend.com/mcp`; this package exists for stdio-only clients and local development.
 
 Manage contacts, compose emails, build automated flows, and launch campaigns through natural language.
 
@@ -35,7 +35,7 @@ OAuth sign-in happens automatically on first use.
 
 ### Claude Desktop
 
-Go to **Settings → MCP Servers → Add** and select **Streamable HTTP** transport:
+Go to **Settings → Connections → Add Custom Connector** and enter:
 
 ```text
 https://api.nitrosend.com/mcp
@@ -61,14 +61,13 @@ Add to `.cursor/mcp.json`:
 {
   "mcpServers": {
     "nitrosend": {
-      "command": "npx",
-      "args": ["-y", "mcp-remote", "https://api.nitrosend.com/mcp"]
+      "url": "https://api.nitrosend.com/mcp"
     }
   }
 }
 ```
 
-Cursor opens your browser to sign in on first use via `mcp-remote`.
+Cursor handles Nitrosend as a direct remote MCP server. On first use, it prompts for OAuth sign-in.
 
 ---
 
@@ -129,16 +128,13 @@ Then run `codex mcp login nitrosend` to authenticate via OAuth.
 
 ### Zed
 
-Zed only supports stdio transport — use `mcp-remote` to bridge:
+Add to your Zed settings:
 
 ```json
 {
   "context_servers": {
     "nitrosend": {
-      "command": {
-        "path": "npx",
-        "args": ["-y", "mcp-remote", "https://api.nitrosend.com/mcp"]
-      }
+      "url": "https://api.nitrosend.com/mcp"
     }
   }
 }
@@ -154,7 +150,7 @@ Zed only supports stdio transport — use `mcp-remote` to bridge:
 https://api.nitrosend.com/mcp
 ```
 
-**If your client only supports stdio**, use the bridge with an API key:
+**If your client only supports stdio**, use this bridge package with an API key:
 
 ```json
 {
