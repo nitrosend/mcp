@@ -1,0 +1,37 @@
+name: Slack CI notify
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.commits != null && toJSON(github.event.commits) != '[]' }}
+    steps:
+      - name: Post commits to #ci
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_CI_WEBHOOK }}
+        run: |
+          if [ -z "$SLACK_WEBHOOK_URL" ]; then
+            echo "SLACK_CI_WEBHOOK not set; skipping."
+            exit 0
+          fi
+
+          commits=$(jq -r '
+            .commits
+            | map("• <\(.url)|`\(.id[0:7])`> \(.message | split("\n")[0]) — \(.author.name)")
+            | join("\n")
+          ' "$GITHUB_EVENT_PATH")
+
+          repo='${{ github.repository }}'
+          branch="${GITHUB_REF#refs/heads/}"
+          pusher='${{ github.actor }}'
+          compare='${{ github.event.compare }}'
+          count=$(jq '.commits | length' "$GITHUB_EVENT_PATH")
+
+          header="*<https://github.com/${repo}|${repo}>* — ${count} commit(s) to \`${branch}\` by ${pusher} (<${compare}|compare>)"
+          text="${header}"$'\n'"${commits}"
+
+          payload=$(jq -nc --arg t "$text" '{text: $t}')
+          curl -sS -X POST -H 'Content-type: application/json' --data "$payload" "$SLACK_WEBHOOK_URL"
