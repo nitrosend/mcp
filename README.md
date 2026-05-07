@@ -2,6 +2,10 @@
 
 Optional stdio bridge for [Nitrosend](https://nitrosend.com). Most clients should connect directly to Nitrosend's remote MCP server at `https://api.nitrosend.com/mcp`; this package exists for stdio-only clients and local development.
 
+For Claude Desktop, Claude.ai, and Claude Cowork, use the remote MCP connector
+UI. Do not install `@nitrosend/cli` or this stdio bridge for the standard
+Claude connector setup.
+
 Manage contacts, compose emails, build automated flows, and launch campaigns through natural language.
 
 ---
