@@ -14,7 +14,8 @@
   "scripts": {
     "build": "tsc && shx chmod +x dist/*.js",
     "prepare": "npm run build",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "test:bridge": "npm run build && node scripts/bridge-serialization-test.mjs"
   },
   "engines": {
     "node": ">=18.0.0"

@@ -1,14 +1,23 @@
 #!/usr/bin/env node
 
+import { createRequire } from "node:module";
+import { once } from "node:events";
 import { createInterface } from "node:readline";
 import { getAuthConfig, getApiUrl } from "./auth.js";
 
+const require = createRequire(import.meta.url);
+const packageJson = require("../package.json") as { version?: string };
+
 const { token, mode } = getAuthConfig();
 const apiUrl = getApiUrl();
+const userAgent = `nitrosend-mcp/${packageJson.version || "unknown"}`;
 
 const RETRY_DELAYS = [100, 300];
 
+type JsonRpcId = string | number | null;
+
 async function forward(line: string): Promise<string> {
+  const requestId = extractRequestId(line);
   let lastError: Error | null = null;
 
   for (let attempt = 0; attempt <= RETRY_DELAYS.length; attempt++) {
@@ -17,7 +26,9 @@ async function forward(line: string): Promise<string> {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Accept: "application/json, text/event-stream",
           Authorization: `Bearer ${token}`,
+          "User-Agent": userAgent,
         },
         body: line,
       });
@@ -37,7 +48,7 @@ async function forward(line: string): Promise<string> {
           ? "Check your NITROSEND_BEARER_TOKEN (may be expired — re-authenticate via OAuth)"
           : "Check your NITROSEND_API_KEY";
         console.error(`Auth error (${res.status}): ${authHint}`);
-        return jsonRpcError(-32000, `Authentication failed (${res.status})`);
+        return jsonRpcError(-32000, `Authentication failed (${res.status})`, requestId);
       }
 
       // 5xx — retry
@@ -46,7 +57,7 @@ async function forward(line: string): Promise<string> {
         continue;
       }
 
-      return jsonRpcError(-32000, `API returned ${res.status}`);
+      return jsonRpcError(-32000, `API returned ${res.status}`, requestId);
     } catch (err) {
       lastError = err as Error;
 
@@ -60,14 +71,31 @@ async function forward(line: string): Promise<string> {
 
   const msg = lastError?.message || "Unknown network error";
   console.error(`Network error: ${msg}`);
-  return jsonRpcError(-32000, `Network error: ${msg}`);
+  return jsonRpcError(-32000, `Network error: ${msg}`, requestId);
 }
 
-function jsonRpcError(code: number, message: string): string {
+function extractRequestId(line: string): JsonRpcId {
+  try {
+    const payload = JSON.parse(line) as { id?: unknown };
+    if (
+      typeof payload.id === "string" ||
+      typeof payload.id === "number" ||
+      payload.id === null
+    ) {
+      return payload.id;
+    }
+  } catch {
+    // Invalid JSON-RPC requests do not have a reliable id to preserve.
+  }
+
+  return null;
+}
+
+function jsonRpcError(code: number, message: string, id: JsonRpcId): string {
   return JSON.stringify({
     jsonrpc: "2.0",
     error: { code, message },
-    id: null,
+    id,
   });
 }
 
@@ -76,30 +104,34 @@ function sleep(ms: number): Promise<void> {
 }
 
 const rl = createInterface({ input: process.stdin });
-let pending = 0;
-let closing = false;
+let queue = Promise.resolve();
 
 rl.on("line", async (line) => {
   const trimmed = line.trim();
   if (!trimmed) return;
 
-  pending++;
-  const response = await forward(trimmed);
-  if (response) {
-    process.stdout.write(response + "\n");
-  }
-  pending--;
-
-  if (closing && pending === 0) {
-    process.exit(0);
-  }
+  queue = queue
+    .then(() => processLine(trimmed))
+    .catch((err: Error) => {
+      console.error(`Bridge error: ${err.message}`);
+    });
 });
 
 rl.on("close", () => {
-  closing = true;
-  if (pending === 0) {
-    process.exit(0);
-  }
+  queue.then(() => process.exit(0));
 });
+
+async function processLine(line: string): Promise<void> {
+  const response = await forward(line);
+  if (response) {
+    await writeStdout(response + "\n");
+  }
+}
+
+async function writeStdout(text: string): Promise<void> {
+  if (!process.stdout.write(text)) {
+    await once(process.stdout, "drain");
+  }
+}
 
 console.error(`Nitrosend MCP bridge started (${apiUrl}, auth=${mode})`);
