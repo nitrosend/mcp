@@ -8,7 +8,7 @@ import { getAuthConfig, getApiUrl } from "./auth.js";
 const require = createRequire(import.meta.url);
 const packageJson = require("../package.json") as { version?: string };
 
-const { token, mode } = getAuthConfig();
+const { token, mode, brandSid } = getAuthConfig();
 const apiUrl = getApiUrl();
 const userAgent = `nitrosend-mcp/${packageJson.version || "unknown"}`;
 
@@ -22,14 +22,20 @@ async function forward(line: string): Promise<string> {
 
   for (let attempt = 0; attempt <= RETRY_DELAYS.length; attempt++) {
     try {
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        Accept: "application/json, text/event-stream",
+        Authorization: `Bearer ${token}`,
+        "User-Agent": userAgent,
+      };
+
+      if (brandSid) {
+        headers["X-Brand-SID"] = brandSid;
+      }
+
       const res = await fetch(apiUrl, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json, text/event-stream",
-          Authorization: `Bearer ${token}`,
-          "User-Agent": userAgent,
-        },
+        headers,
         body: line,
       });
 

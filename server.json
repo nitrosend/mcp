@@ -41,6 +41,13 @@
           "isRequired": false,
           "isSecret": false,
           "format": "string"
+        },
+        {
+          "name": "NITROSEND_BRAND_SID",
+          "description": "Optional fixed-brand override. When set, the bridge sends X-Brand-SID with each MCP request.",
+          "isRequired": false,
+          "isSecret": false,
+          "format": "string"
         }
       ]
     }

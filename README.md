@@ -182,12 +182,21 @@ Once connected, your agent can:
 - **Deliver** — preview emails, run spam checks, send tests, approve and schedule campaigns
 - **Insights** — view open/click/unsubscribe metrics and trends
 
+## Brand context
+
+For OAuth connections, Nitrosend stores the selected MCP brand per user, OAuth application, and account. Ask your agent to call `nitro_get_status` to see `current_brand` and `available_brands`, then call `nitro_select_brand` to switch the current brand for future MCP tool calls.
+
+`nitro_select_brand` only changes the active MCP context. `nitro_set_brand` edits the identity of the current brand, such as colors, logo, sender details, and voice.
+
+API key connections are pinned to the API key's brand and cannot switch with `nitro_select_brand`. For stdio bridge deployments that must force a single brand, set `NITROSEND_BRAND_SID`; the bridge will send `X-Brand-SID` only when that variable is present.
+
 ## Environment variables
 
 | Variable | Description |
 | --- | --- |
 | `NITROSEND_API_KEY` | API key (`nskey_live_...`) — for stdio transport |
 | `NITROSEND_BEARER_TOKEN` | OAuth bearer token — alternative to API key |
+| `NITROSEND_BRAND_SID` | Optional fixed-brand override for the stdio bridge. Sends `X-Brand-SID` only when set. |
 | `NITROSEND_API_URL` | Override API endpoint (default: `https://api.nitrosend.com/mcp`) |
 
 ## Requirements
