@@ -11,6 +11,7 @@ const packageJson = require("../package.json") as { version?: string };
 const { token, mode, brandSid } = getAuthConfig();
 const apiUrl = getApiUrl();
 const userAgent = `nitrosend-mcp/${packageJson.version || "unknown"}`;
+let mcpSessionId: string | undefined;
 
 const RETRY_DELAYS = [100, 300];
 
@@ -33,11 +34,20 @@ async function forward(line: string): Promise<string> {
         headers["X-Brand-SID"] = brandSid;
       }
 
+      if (mcpSessionId) {
+        headers["Mcp-Session-Id"] = mcpSessionId;
+      }
+
       const res = await fetch(apiUrl, {
         method: "POST",
         headers,
         body: line,
       });
+
+      const nextSessionId = res.headers.get("Mcp-Session-Id");
+      if (nextSessionId) {
+        mcpSessionId = nextSessionId;
+      }
 
       if (res.status === 202) {
         // JSON-RPC notification — no response body
