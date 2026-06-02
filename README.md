@@ -182,13 +182,15 @@ Once connected, your agent can:
 - **Deliver** — preview emails, run spam checks, send tests, approve and schedule campaigns
 - **Insights** — view open/click/unsubscribe metrics and trends
 
-## Brand context
+## Account and brand context
 
-For OAuth connections, Nitrosend stores the selected MCP brand per user, OAuth application, and account. Ask your agent to call `nitro_get_status` to see `current_brand` and `available_brands`, then call `nitro_select_brand` to switch the current brand for future MCP tool calls.
+For OAuth connections, Nitrosend stores both the current account and the current brand per user and OAuth application. Ask your agent to call `nitro_get_status` first: it shows `current_account` and `available_accounts` alongside `current_brand` and `available_brands`.
 
-`nitro_select_brand` only changes the active MCP context. `nitro_set_brand` edits the identity of the current brand, such as colors, logo, sender details, and voice.
+If the task is for a different account than the one shown, call `nitro_select_account` with the target `account_id`. The switch takes effect on the next tool call. Then call `nitro_select_brand` to pick a brand within that account. The selected account persists across the session and across token refreshes until you switch again.
 
-API key connections are pinned to the API key's brand and cannot switch with `nitro_select_brand`. For stdio bridge deployments that must force a single brand, set `NITROSEND_BRAND_SID`; the bridge will send `X-Brand-SID` only when that variable is present.
+`nitro_select_account` and `nitro_select_brand` only change the active MCP context. `nitro_set_brand` edits the identity of the current brand, such as colors, logo, sender details, and voice.
+
+API key connections are pinned to the API key's account and brand and cannot switch with `nitro_select_account` or `nitro_select_brand`. For stdio bridge deployments that must force a single brand, set `NITROSEND_BRAND_SID`; the bridge will send `X-Brand-SID` only when that variable is present.
 
 ## Environment variables
 
