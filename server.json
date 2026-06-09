@@ -3,7 +3,7 @@
   "name": "com.nitrosend/mcp",
   "title": "Nitrosend",
   "description": "Optional stdio bridge for Nitrosend's remote MCP server",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "websiteUrl": "https://nitrosend.com",
   "repository": {
     "url": "https://github.com/nitrosend/nitrosend",
@@ -15,7 +15,7 @@
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@nitrosend/mcp",
-      "version": "0.7.0",
+      "version": "0.8.0",
       "transport": {
         "type": "stdio"
       },
@@ -43,8 +43,8 @@
           "format": "string"
         },
         {
-          "name": "NITROSEND_CLIENT_ACCOUNT_SID",
-          "description": "Optional fixed-client-account override. When set, the bridge sends X-Client-Account-SID with each MCP request.",
+          "name": "NITROSEND_BRAND_SID",
+          "description": "Optional fixed-brand override. When set, the bridge sends X-Brand-SID with each MCP request.",
           "isRequired": false,
           "isSecret": false,
           "format": "string"
