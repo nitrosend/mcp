@@ -3,16 +3,17 @@ const DEFAULT_API_URL = "https://api.nitrosend.com/mcp";
 export interface AuthConfig {
   token: string;
   mode: "api_key" | "bearer";
-  brandSid?: string;
+  clientAccountSid?: string;
 }
 
 export function getAuthConfig(): AuthConfig {
   const apiKey = process.env.NITROSEND_API_KEY;
   const bearerToken = process.env.NITROSEND_BEARER_TOKEN;
-  const brandSid = process.env.NITROSEND_BRAND_SID?.trim() || undefined;
+  const clientAccountSid =
+    process.env.NITROSEND_CLIENT_ACCOUNT_SID?.trim() || undefined;
 
   if (bearerToken) {
-    return { token: bearerToken, mode: "bearer", brandSid };
+    return { token: bearerToken, mode: "bearer", clientAccountSid };
   }
 
   if (apiKey) {
@@ -24,7 +25,7 @@ export function getAuthConfig(): AuthConfig {
       );
       process.exit(1);
     }
-    return { token: apiKey, mode: "api_key", brandSid };
+    return { token: apiKey, mode: "api_key", clientAccountSid };
   }
 
   console.error(

@@ -182,15 +182,15 @@ Once connected, your agent can:
 - **Deliver** — preview emails, run spam checks, send tests, approve and schedule campaigns
 - **Insights** — view open/click/unsubscribe metrics and trends
 
-## Account and brand context
+## Account and client-account context
 
-For OAuth connections, Nitrosend stores both the current account and the current brand per user and OAuth application. Ask your agent to call `nitro_get_status` first: it shows `current_account` and `available_accounts` alongside `current_brand` and `available_brands`.
+For OAuth connections, Nitrosend stores both the current account and the current client account per user and OAuth application. Ask your agent to call `nitro_get_status` first: it shows `current_account` and `available_accounts` alongside `current_client_account` and `available_client_accounts`.
 
-If the task is for a different account than the one shown, call `nitro_select_account` with the target `account_id`. The switch takes effect on the next tool call. Then call `nitro_select_brand` to pick a brand within that account. The selected account persists across the session and across token refreshes until you switch again.
+If the task is for a different account than the one shown, call `nitro_select_account` with the target `account_id`. The switch takes effect on the next tool call. Then call `nitro_select_client_account` to pick a client account within that account. The selected account persists across the session and across token refreshes until you switch again.
 
-`nitro_select_account` and `nitro_select_brand` only change the active MCP context. `nitro_set_brand` edits the identity of the current brand, such as colors, logo, sender details, and voice.
+`nitro_select_account` and `nitro_select_client_account` only change the active MCP context. `nitro_set_brand_kit` edits the Brand Kit for the current client account, such as colors, logo, sender details, and voice.
 
-API key connections are pinned to the API key's account and brand and cannot switch with `nitro_select_account` or `nitro_select_brand`. For stdio bridge deployments that must force a single brand, set `NITROSEND_BRAND_SID`; the bridge will send `X-Brand-SID` only when that variable is present.
+API key connections are pinned to the API key's account and client account and cannot switch with `nitro_select_account` or `nitro_select_client_account`. For stdio bridge deployments that must force a single client account, set `NITROSEND_CLIENT_ACCOUNT_SID`; the bridge will send `X-Client-Account-SID` only when that variable is present.
 
 ## Environment variables
 
@@ -198,7 +198,7 @@ API key connections are pinned to the API key's account and brand and cannot swi
 | --- | --- |
 | `NITROSEND_API_KEY` | API key (`nskey_live_...`) — for stdio transport |
 | `NITROSEND_BEARER_TOKEN` | OAuth bearer token — alternative to API key |
-| `NITROSEND_BRAND_SID` | Optional fixed-brand override for the stdio bridge. Sends `X-Brand-SID` only when set. |
+| `NITROSEND_CLIENT_ACCOUNT_SID` | Optional fixed-client-account override for the stdio bridge. Sends `X-Client-Account-SID` only when set. |
 | `NITROSEND_API_URL` | Override API endpoint (default: `https://api.nitrosend.com/mcp`) |
 
 ## Requirements

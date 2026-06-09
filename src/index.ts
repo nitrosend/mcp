@@ -8,7 +8,7 @@ import { getAuthConfig, getApiUrl } from "./auth.js";
 const require = createRequire(import.meta.url);
 const packageJson = require("../package.json") as { version?: string };
 
-const { token, mode, brandSid } = getAuthConfig();
+const { token, mode, clientAccountSid } = getAuthConfig();
 const apiUrl = getApiUrl();
 const userAgent = `nitrosend-mcp/${packageJson.version || "unknown"}`;
 let mcpSessionId: string | undefined;
@@ -30,8 +30,8 @@ async function forward(line: string): Promise<string> {
         "User-Agent": userAgent,
       };
 
-      if (brandSid) {
-        headers["X-Brand-SID"] = brandSid;
+      if (clientAccountSid) {
+        headers["X-Client-Account-SID"] = clientAccountSid;
       }
 
       if (mcpSessionId) {
