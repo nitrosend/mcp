@@ -3,7 +3,7 @@
   "name": "com.nitrosend/mcp",
   "title": "Nitrosend",
   "description": "Optional stdio bridge for Nitrosend's remote MCP server",
-  "version": "0.6.4",
+  "version": "0.7.0",
   "websiteUrl": "https://nitrosend.com",
   "repository": {
     "url": "https://github.com/nitrosend/nitrosend",
@@ -15,7 +15,7 @@
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@nitrosend/mcp",
-      "version": "0.6.4",
+      "version": "0.7.0",
       "transport": {
         "type": "stdio"
       },
