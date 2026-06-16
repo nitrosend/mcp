@@ -11,11 +11,12 @@ Claude connector setup.
 Manage contacts, compose emails, build automated flows, and launch campaigns through natural language.
 
 For image media used in templates or campaigns, MCP should orchestrate rather
-than carry large bytes. Small chat-attached images can use `nitro_ingest_image`
-with `image_data`; public images can use `image_url` when Nitro-hosted
-permanence is desired; larger local files should use API direct upload with
-`purpose=image` or `purpose=media_asset`, then pass the returned `signed_id` to
-`nitro_ingest_image`.
+than carry large bytes. Small chat-attached images can use `nitro_ingest`
+with `kind=image` and `image_data`; public images can use `image_url` when
+Nitro-hosted permanence is desired; larger local files should call
+`nitro_ingest(upload: {kind: "image", filename, content_type, byte_size, checksum})`,
+PUT bytes to `direct_upload.url`, then pass the returned `signed_id` to
+`nitro_ingest`.
 
 ---
 
