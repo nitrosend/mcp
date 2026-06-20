@@ -1,9 +1,9 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "com.nitrosend/mcp",
+  "name": "com.nitrosend/nitrosend",
   "title": "Nitrosend",
-  "description": "Optional stdio bridge for Nitrosend's remote MCP server",
-  "version": "0.8.0",
+  "description": "AI-native email marketing. Campaigns, automations, transactional, contacts, and analytics.",
+  "version": "0.8.2",
   "websiteUrl": "https://nitrosend.com",
   "repository": {
     "url": "https://github.com/nitrosend/nitrosend",
@@ -15,7 +15,7 @@
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@nitrosend/mcp",
-      "version": "0.8.0",
+      "version": "0.8.2",
       "transport": {
         "type": "stdio"
       },
