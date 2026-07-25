@@ -13,81 +13,63 @@ const apiUrl = getApiUrl();
 const userAgent = `nitrosend-mcp/${packageJson.version || "unknown"}`;
 let mcpSessionId: string | undefined;
 
-const RETRY_DELAYS = [100, 300];
-
 type JsonRpcId = string | number | null;
 
 async function forward(line: string): Promise<string> {
   const requestId = extractRequestId(line);
-  let lastError: Error | null = null;
+  try {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      Accept: "application/json, text/event-stream",
+      Authorization: `Bearer ${token}`,
+      "User-Agent": userAgent,
+    };
 
-  for (let attempt = 0; attempt <= RETRY_DELAYS.length; attempt++) {
-    try {
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-        Accept: "application/json, text/event-stream",
-        Authorization: `Bearer ${token}`,
-        "User-Agent": userAgent,
-      };
-
-      if (brandSid) {
-        headers["X-Brand-SID"] = brandSid;
-      }
-
-      if (mcpSessionId) {
-        headers["Mcp-Session-Id"] = mcpSessionId;
-      }
-
-      const res = await fetch(apiUrl, {
-        method: "POST",
-        headers,
-        body: line,
-      });
-
-      const nextSessionId = res.headers.get("Mcp-Session-Id");
-      if (nextSessionId) {
-        mcpSessionId = nextSessionId;
-      }
-
-      if (res.status === 202) {
-        // JSON-RPC notification — no response body
-        return "";
-      }
-
-      if (res.ok) {
-        return await res.text();
-      }
-
-      // 401/403 — don't retry auth errors
-      if (res.status === 401 || res.status === 403) {
-        const authHint = mode === "bearer"
-          ? "Check your NITROSEND_BEARER_TOKEN (may be expired — re-authenticate via OAuth)"
-          : "Check your NITROSEND_API_KEY";
-        console.error(`Auth error (${res.status}): ${authHint}`);
-        return jsonRpcError(-32000, `Authentication failed (${res.status})`, requestId);
-      }
-
-      // 5xx — retry
-      if (res.status >= 500 && attempt < RETRY_DELAYS.length) {
-        await sleep(RETRY_DELAYS[attempt]);
-        continue;
-      }
-
-      return jsonRpcError(-32000, `API returned ${res.status}`, requestId);
-    } catch (err) {
-      lastError = err as Error;
-
-      // Network error — retry
-      if (attempt < RETRY_DELAYS.length) {
-        await sleep(RETRY_DELAYS[attempt]);
-        continue;
-      }
+    if (brandSid) {
+      headers["X-Brand-SID"] = brandSid;
     }
-  }
 
-  const msg = lastError?.message || "Unknown network error";
-  console.error(`Network error: ${msg}`);
-  return jsonRpcError(-32000, `Network error: ${msg}`, requestId);
+    if (mcpSessionId) {
+      headers["Mcp-Session-Id"] = mcpSessionId;
+    }
+
+    // Never replay a JSON-RPC POST inside the bridge. A network failure or
+    // 5xx can arrive after the API committed a mutating tools/call, so only
+    // the caller can safely retry with the tool's explicit idempotency key.
+    const res = await fetch(apiUrl, {
+      method: "POST",
+      headers,
+      body: line,
+    });
+
+    const nextSessionId = res.headers.get("Mcp-Session-Id");
+    if (nextSessionId) {
+      mcpSessionId = nextSessionId;
+    }
+
+    if (res.status === 202) {
+      // JSON-RPC notification — no response body
+      return "";
+    }
+
+    if (res.ok) {
+      return await res.text();
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      const authHint = mode === "bearer"
+        ? "Check your NITROSEND_BEARER_TOKEN (may be expired — re-authenticate via OAuth)"
+        : "Check your NITROSEND_API_KEY";
+      console.error(`Auth error (${res.status}): ${authHint}`);
+      return jsonRpcError(-32000, `Authentication failed (${res.status})`, requestId);
+    }
+
+    return jsonRpcError(-32000, `API returned ${res.status}`, requestId);
+  } catch (err) {
+    const message = (err as Error).message || "Unknown network error";
+    console.error(`Network error: ${message}`);
+    return jsonRpcError(-32000, `Network error: ${message}`, requestId);
+  }
 }
 
 function extractRequestId(line: string): JsonRpcId {
@@ -113,10 +95,6 @@ function jsonRpcError(code: number, message: string, id: JsonRpcId): string {
     error: { code, message },
     id,
   });
-}
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 const rl = createInterface({ input: process.stdin });

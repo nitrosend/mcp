@@ -11,6 +11,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 await testSerializedForwarding();
 await testBridgeGeneratedErrorPreservesId();
+await testToolCallIsNeverReplayedAfterServerError();
 
 async function testSerializedForwarding() {
   let requests = 0;
@@ -87,6 +88,40 @@ async function testBridgeGeneratedErrorPreservesId() {
   assert.equal(response.id, "status-check");
   assert.equal(response.error.code, -32000);
   assert.equal(response.error.message, "API returned 418");
+
+  bridge.end();
+  await bridge.waitForExit();
+  await server.close();
+}
+
+async function testToolCallIsNeverReplayedAfterServerError() {
+  let requests = 0;
+  const server = await startServer((req, res) => {
+    collectBody(req, () => {
+      requests += 1;
+      res.writeHead(503);
+      res.end("unavailable after an indeterminate tool outcome");
+    });
+  });
+
+  const bridge = spawnBridge(server.url);
+  bridge.write({
+    jsonrpc: "2.0",
+    method: "tools/call",
+    params: {
+      name: "nitro_send_message",
+      arguments: { idempotency_key: "bridge-proof" },
+    },
+    id: "tool-call",
+  });
+
+  const [line] = await bridge.waitForLines(1);
+  const response = JSON.parse(line);
+  await sleep(500);
+
+  assert.equal(requests, 1, "bridge replayed an indeterminate mutating tool call");
+  assert.equal(response.id, "tool-call");
+  assert.equal(response.error.message, "API returned 503");
 
   bridge.end();
   await bridge.waitForExit();
