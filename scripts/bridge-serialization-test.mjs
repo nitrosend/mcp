@@ -12,6 +12,40 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 await testSerializedForwarding();
 await testBridgeGeneratedErrorPreservesId();
 await testToolCallIsNeverReplayedAfterServerError();
+await testSseResponsesAreDecodedToJsonRpcLines();
+
+// Regression: the API answers any session-bearing request with
+// `text/event-stream`. Returning that body verbatim put `data: {...}` on
+// stdout, which stdio hosts read as a parse error — a connected server with
+// zero usable tools. Every line the bridge emits must be bare JSON-RPC.
+async function testSseResponsesAreDecodedToJsonRpcLines() {
+  const server = await startServer((req, res) => {
+    collectBody(req, () => {
+      res.writeHead(200, { "Content-Type": "text/event-stream" });
+      res.end(
+        `event: message\ndata: ${JSON.stringify({
+          jsonrpc: "2.0",
+          id: 1,
+          result: { tools: [{ name: "nitro_get_status" }] },
+        })}\n\n`,
+      );
+    });
+  });
+
+  const bridge = spawnBridge(server.url);
+  bridge.write({ jsonrpc: "2.0", id: 1, method: "tools/list" });
+
+  const [line] = await bridge.waitForLines(1);
+  assert.equal(line.startsWith("data:"), false, "SSE framing leaked to stdout");
+
+  const response = JSON.parse(line);
+  assert.equal(response.id, 1);
+  assert.equal(response.result.tools[0].name, "nitro_get_status");
+
+  bridge.end();
+  await bridge.waitForExit();
+  await server.close();
+}
 
 async function testSerializedForwarding() {
   let requests = 0;

@@ -53,7 +53,7 @@ async function forward(line: string): Promise<string> {
     }
 
     if (res.ok) {
-      return await res.text();
+      return decodeBody(await res.text(), res.headers.get("Content-Type"));
     }
 
     if (res.status === 401 || res.status === 403) {
@@ -70,6 +70,36 @@ async function forward(line: string): Promise<string> {
     console.error(`Network error: ${message}`);
     return jsonRpcError(-32000, `Network error: ${message}`, requestId);
   }
+}
+
+// The Streamable HTTP spec REQUIRES this client to advertise
+// `text/event-stream` in Accept — the API rejects the POST outright without it
+// ("Not Acceptable") — so the bridge must also be prepared to receive one.
+// Any request carrying an Mcp-Session-Id is served by the API's stateful
+// transport, which replies with SSE rather than plain JSON. Writing those
+// frames to stdout verbatim emits `data: {...}` where the host expects a bare
+// JSON-RPC line; every stdio host reads that as a parse error, so the server
+// connects and then exposes zero usable tools. Unwrap the frames back into
+// newline-delimited JSON-RPC.
+function decodeBody(body: string, contentType: string | null): string {
+  if (!contentType?.toLowerCase().includes("text/event-stream")) {
+    return body;
+  }
+
+  const messages: string[] = [];
+  // Events are separated by a blank line; `data:` may repeat within one event
+  // and its parts are joined with newlines (per the SSE spec).
+  for (const event of body.split(/\r?\n\r?\n/)) {
+    const data = event
+      .split(/\r?\n/)
+      .filter((l) => l.startsWith("data:"))
+      .map((l) => l.slice(5).replace(/^ /, ""))
+      .join("\n");
+
+    if (data.trim()) messages.push(data);
+  }
+
+  return messages.join("\n");
 }
 
 function extractRequestId(line: string): JsonRpcId {
