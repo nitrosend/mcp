@@ -1,5 +1,7 @@
 # @nitrosend/mcp
 
+[![smithery badge](https://smithery.ai/badge/nitrosend/nitrosend)](https://smithery.ai/servers/nitrosend/nitrosend)
+
 Optional stdio bridge for [Nitrosend](https://nitrosend.com). Most clients should connect directly to Nitrosend's remote MCP server at `https://api.nitrosend.com/mcp`; this package exists for stdio-only clients and local development.
 
 All plans, including free plans, have full access to the generally available Nitrosend MCP/API/CLI surface. Plan limits still apply to send volume, seats, AI action allowances, and paid add-ons. The Free plan includes 8,000 free emails up front, then 500 free emails every month.
