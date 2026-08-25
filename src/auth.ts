@@ -1,4 +1,5 @@
 const DEFAULT_API_URL = "https://api.nitrosend.com/mcp";
+const API_KEYS_URL = "https://app.nitrosend.com/my/settings/api-keys";
 
 export interface AuthConfig {
   token: string;
@@ -21,7 +22,7 @@ export function getAuthConfig(): AuthConfig {
       console.error(
         "Error: Invalid API key format.\n\n" +
           "API keys must start with nskey_live_.\n" +
-          "Get your key at: https://app.nitrosend.com/my/brand/api-keys"
+          `Get your key at: ${API_KEYS_URL}`
       );
       process.exit(1);
     }
@@ -34,7 +35,7 @@ export function getAuthConfig(): AuthConfig {
       "  export NITROSEND_API_KEY=nskey_live_...\n\n" +
       "Or pass it when adding the server:\n" +
       "  npx -y @nitrosend/mcp with NITROSEND_API_KEY=nskey_live_... in your env config\n\n" +
-      "Get your key at: https://app.nitrosend.com/my/brand/api-keys"
+      `Get your key at: ${API_KEYS_URL}`
   );
   process.exit(1);
 }

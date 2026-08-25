@@ -8,10 +8,30 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const API_KEYS_URL = "https://app.nitrosend.com/my/settings/api-keys";
 
+await testAuthGuidanceUsesCanonicalSettingsUrl();
 await testSerializedForwarding();
 await testBridgeGeneratedErrorPreservesId();
 await testToolCallIsNeverReplayedAfterServerError();
+
+async function testAuthGuidanceUsesCanonicalSettingsUrl() {
+  for (const authEnv of [
+    { NITROSEND_API_KEY: "invalid-key" },
+    {},
+  ]) {
+    const { code, stderr } = await runBridgeForAuthError(authEnv);
+    const guidanceUrl = stderr.match(/^Get your key at: (.+)$/m)?.[1];
+
+    assert.equal(code, 1, stderr);
+    assert.equal(guidanceUrl, API_KEYS_URL, stderr);
+    assert.notEqual(
+      guidanceUrl,
+      "https://app.nitrosend.com/my/brand/api-keys",
+      stderr
+    );
+  }
+}
 
 async function testSerializedForwarding() {
   let requests = 0;
@@ -185,6 +205,28 @@ function spawnBridge(apiUrl) {
       assert.equal(code, 0, stderr);
     },
   };
+}
+
+async function runBridgeForAuthError(authEnv) {
+  const env = { ...process.env };
+  delete env.NITROSEND_API_KEY;
+  delete env.NITROSEND_BEARER_TOKEN;
+  Object.assign(env, authEnv);
+
+  const child = spawn(process.execPath, ["dist/index.js"], {
+    cwd: root,
+    env,
+    stdio: ["ignore", "ignore", "pipe"],
+  });
+  let stderr = "";
+
+  child.stderr.setEncoding("utf8");
+  child.stderr.on("data", (chunk) => {
+    stderr += chunk;
+  });
+
+  const [code] = await once(child, "exit");
+  return { code, stderr };
 }
 
 function collectBody(req, callback) {
