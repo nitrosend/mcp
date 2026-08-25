@@ -21,10 +21,15 @@ async function testAuthGuidanceUsesCanonicalSettingsUrl() {
     {},
   ]) {
     const { code, stderr } = await runBridgeForAuthError(authEnv);
+    const guidanceUrl = stderr.match(/^Get your key at: (.+)$/m)?.[1];
 
     assert.equal(code, 1, stderr);
-    assert.ok(stderr.includes(API_KEYS_URL), stderr);
-    assert.ok(!stderr.includes("/my/brand/api-keys"), stderr);
+    assert.equal(guidanceUrl, API_KEYS_URL, stderr);
+    assert.notEqual(
+      guidanceUrl,
+      "https://app.nitrosend.com/my/brand/api-keys",
+      stderr
+    );
   }
 }
 
