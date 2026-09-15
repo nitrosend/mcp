@@ -47,19 +47,11 @@ OAuth sign-in happens automatically on first use.
 
 ---
 
-### Claude Desktop
+### Claude Desktop, Claude.ai and Cowork
 
-Go to **Settings → Connections → Add Custom Connector** and enter:
+Nitrosend is an official connector in the Claude directory. Go to **Settings → Connectors**, search for **Nitrosend** and click **Connect**, or open <https://claude.ai/directory/nitrosend>. Sign in when prompted; no URL to paste and no API key.
 
-```text
-https://api.nitrosend.com/mcp
-```
-
----
-
-### Claude.ai (web + mobile)
-
-Go to **Settings → Connectors → Add custom connector** and enter:
+If your Claude organisation restricts directory connectors, ask an organisation owner to enable Nitrosend or to add it as a custom connector with:
 
 ```text
 https://api.nitrosend.com/mcp
