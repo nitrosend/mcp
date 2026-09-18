@@ -61,7 +61,15 @@ https://api.nitrosend.com/mcp
 
 ### Cursor
 
-Add to `.cursor/mcp.json`:
+Nitrosend is an official plugin on the [Cursor Marketplace](https://cursor.com/marketplace/nitrosend). In Cursor's Agent chat, run:
+
+```
+/add-plugin nitrosend
+```
+
+Or click **Add to Cursor** on the Marketplace listing. The first Nitrosend tool call opens the OAuth sign-in; no API key, no config file.
+
+Prefer to manage the server yourself? Add to `~/.cursor/mcp.json` (all projects) or `.cursor/mcp.json` (this repo):
 
 ```json
 {
