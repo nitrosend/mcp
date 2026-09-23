@@ -194,7 +194,7 @@ Once connected, your agent can:
 
 For OAuth connections, Nitrosend stores both the current account and the current brand per user and OAuth application. Ask your agent to call `nitro_get_status` first: it shows `current_account` and `available_accounts` alongside `current_brand` and `available_brands`.
 
-If the task is for a different account than the one shown, call `nitro_select_account` with the target `account_id`. The switch takes effect on the next tool call. Then call `nitro_select_brand` to pick a brand within that account. The selected brand persists across the session and across token refreshes until you switch again.
+If the task is for a different account than the one shown, call `nitro_select_account` with the target `account_id`. The switch takes effect on the next tool call. Then call `nitro_select_brand` to pick a brand within that account. The selected brand persists for this authenticated client across requests, reconnects, and token refreshes until you switch again.
 
 `nitro_select_account` and `nitro_select_brand` only change the active MCP context. `nitro_set_brand_kit` edits the Brand Kit for the current brand, such as colors, logo, sender details, and voice.
 
