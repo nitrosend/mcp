@@ -1,2 +1,4 @@
 dist/
 node_modules/
+.mcpregistry_*
+.DS_Store
