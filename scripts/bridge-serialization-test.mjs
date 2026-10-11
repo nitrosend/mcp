@@ -12,6 +12,8 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 await testSerializedForwarding();
 await testBridgeGeneratedErrorPreservesId();
 await testToolCallIsNeverReplayedAfterServerError();
+await testSseResponseEmitsEachEventAsJsonLine();
+await testSseStreamWithoutResponseFailsClosed();
 
 async function testSerializedForwarding() {
   let requests = 0;
@@ -122,6 +124,58 @@ async function testToolCallIsNeverReplayedAfterServerError() {
   assert.equal(requests, 1, "bridge replayed an indeterminate mutating tool call");
   assert.equal(response.id, "tool-call");
   assert.equal(response.error.message, "API returned 503");
+
+  bridge.end();
+  await bridge.waitForExit();
+  await server.close();
+}
+
+async function testSseResponseEmitsEachEventAsJsonLine() {
+  const server = await startServer((req, res) => {
+    collectBody(req, () => {
+      res.writeHead(200, { "Content-Type": "text/event-stream" });
+      res.write("event: message\r\n");
+      res.write('data: {"jsonrpc":"2.0","method":"notifications/progress","params":{"progress":1}}\r\n\r\n');
+      res.write(": keep-alive\n\n");
+      res.write("event: message\n");
+      res.write('data: {"jsonrpc":"2.0","result":{"ok":true},"id":7}\n\n');
+      res.end();
+    });
+  });
+
+  const bridge = spawnBridge(server.url);
+  bridge.write({ jsonrpc: "2.0", method: "tools/call", id: 7 });
+
+  const lines = await bridge.waitForLines(2);
+  const [notification, response] = lines.map((line) => JSON.parse(line));
+
+  assert.equal(notification.method, "notifications/progress");
+  assert.equal(notification.id, undefined);
+  assert.deepEqual(response, { jsonrpc: "2.0", result: { ok: true }, id: 7 });
+
+  bridge.end();
+  await bridge.waitForExit();
+  await server.close();
+}
+
+async function testSseStreamWithoutResponseFailsClosed() {
+  const server = await startServer((req, res) => {
+    collectBody(req, () => {
+      res.writeHead(200, { "Content-Type": "text/event-stream" });
+      res.write('data: {"jsonrpc":"2.0","method":"notifications/progress","params":{}}\n\n');
+      res.end();
+    });
+  });
+
+  const bridge = spawnBridge(server.url);
+  bridge.write({ jsonrpc: "2.0", method: "tools/call", id: "sse-orphan" });
+
+  const lines = await bridge.waitForLines(2);
+  const response = JSON.parse(lines[1]);
+
+  assert.equal(response.id, "sse-orphan");
+  assert.equal(response.error.code, -32000);
+  assert.match(response.error.message, /stream ended/i);
 
   bridge.end();
   await bridge.waitForExit();

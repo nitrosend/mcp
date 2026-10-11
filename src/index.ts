@@ -15,7 +15,9 @@ let mcpSessionId: string | undefined;
 
 type JsonRpcId = string | number | null;
 
-async function forward(line: string): Promise<string> {
+type EmitMessage = (message: string) => Promise<void>;
+
+async function forward(line: string, emit: EmitMessage): Promise<void> {
   const requestId = extractRequestId(line);
   try {
     const headers: Record<string, string> = {
@@ -49,11 +51,21 @@ async function forward(line: string): Promise<string> {
 
     if (res.status === 202) {
       // JSON-RPC notification — no response body
-      return "";
+      return;
     }
 
     if (res.ok) {
-      return await res.text();
+      const contentType = res.headers.get("Content-Type") || "";
+      if (contentType.includes("text/event-stream")) {
+        await forwardEventStream(res, requestId, emit);
+        return;
+      }
+
+      const text = await res.text();
+      if (text) {
+        await emit(text);
+      }
+      return;
     }
 
     if (res.status === 401 || res.status === 403) {
@@ -61,14 +73,98 @@ async function forward(line: string): Promise<string> {
         ? "Check your NITROSEND_BEARER_TOKEN (may be expired — re-authenticate via OAuth)"
         : "Check your NITROSEND_API_KEY";
       console.error(`Auth error (${res.status}): ${authHint}`);
-      return jsonRpcError(-32000, `Authentication failed (${res.status})`, requestId);
+      await emit(jsonRpcError(-32000, `Authentication failed (${res.status})`, requestId));
+      return;
     }
 
-    return jsonRpcError(-32000, `API returned ${res.status}`, requestId);
+    await emit(jsonRpcError(-32000, `API returned ${res.status}`, requestId));
   } catch (err) {
     const message = (err as Error).message || "Unknown network error";
     console.error(`Network error: ${message}`);
-    return jsonRpcError(-32000, `Network error: ${message}`, requestId);
+    await emit(jsonRpcError(-32000, `Network error: ${message}`, requestId));
+  }
+}
+
+// A Streamable HTTP server may answer a POST with an SSE stream that carries
+// related notifications before the final response. Each event's data is one
+// JSON-RPC message; re-serialize it so stdout stays one message per line no
+// matter how the server framed the event.
+async function forwardEventStream(
+  res: Response,
+  requestId: JsonRpcId,
+  emit: EmitMessage
+): Promise<void> {
+  let respondedToRequest = requestId === null;
+  let dataLines: string[] = [];
+
+  const dispatch = async (): Promise<void> => {
+    if (dataLines.length === 0) return;
+    const data = dataLines.join("\n");
+    dataLines = [];
+
+    let message: unknown;
+    try {
+      message = JSON.parse(data);
+    } catch {
+      console.error("Ignoring non-JSON event stream data");
+      return;
+    }
+
+    if (
+      message !== null &&
+      typeof message === "object" &&
+      (message as { id?: unknown }).id === requestId
+    ) {
+      respondedToRequest = true;
+    }
+
+    await emit(JSON.stringify(message));
+  };
+
+  const handleLine = async (rawLine: string): Promise<void> => {
+    const line = rawLine.endsWith("\r") ? rawLine.slice(0, -1) : rawLine;
+    if (line === "") {
+      await dispatch();
+      return;
+    }
+    if (line.startsWith("data:")) {
+      dataLines.push(line.startsWith("data: ") ? line.slice(6) : line.slice(5));
+    }
+    // event:, id:, retry: and comment lines carry no JSON-RPC payload
+  };
+
+  try {
+    if (res.body) {
+      const decoder = new TextDecoder();
+      let buffered = "";
+
+      for await (const chunk of res.body) {
+        buffered += decoder.decode(chunk as Uint8Array, { stream: true });
+
+        let newline: number;
+        while ((newline = buffered.indexOf("\n")) !== -1) {
+          const rawLine = buffered.slice(0, newline);
+          buffered = buffered.slice(newline + 1);
+          await handleLine(rawLine);
+        }
+      }
+
+      buffered += decoder.decode();
+      if (buffered) {
+        await handleLine(buffered);
+      }
+      await dispatch();
+    }
+  } catch (err) {
+    console.error(`Event stream error: ${(err as Error).message}`);
+  }
+
+  if (!respondedToRequest) {
+    // The stream closed without answering the request; fail closed so the
+    // client is not left waiting on an id that will never resolve.
+    await emit(
+      jsonRpcError(-32000, "Event stream ended before a response arrived", requestId)
+    );
   }
 }
 
@@ -116,10 +212,9 @@ rl.on("close", () => {
 });
 
 async function processLine(line: string): Promise<void> {
-  const response = await forward(line);
-  if (response) {
-    await writeStdout(response + "\n");
-  }
+  await forward(line, async (message) => {
+    await writeStdout(message + "\n");
+  });
 }
 
 async function writeStdout(text: string): Promise<void> {
