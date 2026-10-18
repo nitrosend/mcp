@@ -2,35 +2,53 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "com.nitrosend/nitrosend",
   "title": "Nitrosend",
-  "description": "AI-native email marketing. Campaigns, automations, transactional, contacts, and analytics.",
-  "version": "0.8.2",
-  "websiteUrl": "https://nitrosend.com",
+  "description": "AI-native email marketing: campaigns, automation flows, contacts and transactional email over MCP.",
+  "version": "0.8.3",
+  "websiteUrl": "https://nitrosend.com/mcp",
   "repository": {
-    "url": "https://github.com/nitrosend/nitrosend",
+    "url": "https://github.com/nitrosend/mcp",
     "source": "github",
-    "id": "nitrosend/nitrosend"
+    "id": "1195604659"
   },
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/nitrosend/mcp/main/logo.png",
+      "mimeType": "image/png",
+      "sizes": ["400x400"]
+    },
+    {
+      "src": "https://nitrosend.com/favicon.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": ["any"]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://api.nitrosend.com/mcp"
+    }
+  ],
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@nitrosend/mcp",
-      "version": "0.8.2",
+      "version": "0.8.3",
+      "runtimeHint": "npx",
       "transport": {
         "type": "stdio"
       },
-      "runtimeHint": "npx",
       "environmentVariables": [
         {
           "name": "NITROSEND_API_KEY",
-          "description": "Nitrosend API key for stdio bridge usage (starts with nskey_live_)",
-          "isRequired": true,
+          "description": "Nitrosend API key for stdio bridge usage (starts with nskey_live_). Required unless NITROSEND_BEARER_TOKEN is set.",
+          "isRequired": false,
           "isSecret": true,
           "format": "string"
         },
         {
           "name": "NITROSEND_BEARER_TOKEN",
-          "description": "Optional OAuth bearer token for the stdio bridge",
+          "description": "OAuth bearer token for the stdio bridge. Use instead of NITROSEND_API_KEY.",
           "isRequired": false,
           "isSecret": true,
           "format": "string"
