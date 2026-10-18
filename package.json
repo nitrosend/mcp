@@ -4,6 +4,10 @@
   "description": "MCP server for Nitrosend — connect Claude to your email marketing platform",
   "mcpName": "com.nitrosend/nitrosend",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nitrosend/mcp.git"
+  },
   "type": "module",
   "bin": {
     "nitrosend-mcp": "dist/index.js"
