@@ -3,13 +3,26 @@
   "name": "com.nitrosend/nitrosend",
   "title": "Nitrosend",
   "description": "AI-native email marketing. Campaigns, automations, transactional, contacts, and analytics.",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "websiteUrl": "https://nitrosend.com",
+  "icons": [
+    {
+      "src": "https://nitrosend.com/assets/nitrosend-mark.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": ["any"]
+    }
+  ],
   "repository": {
     "url": "https://github.com/nitrosend/nitrosend",
     "source": "github",
     "id": "nitrosend/nitrosend"
   },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://api.nitrosend.com/mcp"
+    }
+  ],
   "packages": [
     {
       "registryType": "npm",
