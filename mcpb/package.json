@@ -1,0 +1,30 @@
+{
+  "name": "nitrosend-mcpb",
+  "version": "1.0.1",
+  "description": "Nitrosend Desktop Extension — connects Claude Desktop to the Nitrosend remote MCP server with browser OAuth",
+  "private": true,
+  "license": "MIT",
+  "author": {
+    "name": "Nitrosend",
+    "email": "contact@nitrosend.com",
+    "url": "https://nitrosend.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nitrosend/claude.git",
+    "directory": "mcpb"
+  },
+  "main": "server/index.js",
+  "scripts": {
+    "test": "node --test",
+    "pack": "mcpb pack . dist/nitrosend.mcpb",
+    "verify": "node scripts/verify.mjs dist/nitrosend.mcpb",
+    "smoke": "node scripts/smoke.mjs --from-artifact dist/nitrosend.mcpb"
+  },
+  "engines": {
+    "node": ">=20.18.1"
+  },
+  "dependencies": {
+    "mcp-remote": "0.1.38"
+  }
+}
