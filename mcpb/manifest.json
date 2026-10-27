@@ -1,0 +1,173 @@
+{
+  "$schema": "https://raw.githubusercontent.com/modelcontextprotocol/mcpb/main/dist/mcpb-manifest.schema.json",
+  "manifest_version": "0.3",
+  "name": "nitrosend",
+  "display_name": "Nitrosend",
+  "version": "1.0.2",
+  "description": "AI-native email from Claude: compose campaigns, build flows, manage contacts, and send.",
+  "long_description": "Nitrosend is AI-Native Email: a full email service provider built for the MCP era, where Claude is the interface. Install this extension, sign in once with browser OAuth, and Claude can run your entire email program — no tab-switching, no drag-and-drop editor, no CSV wrangling.\n\nWhat Claude can do with Nitrosend:\n\n- **Compose on-brand emails** with a section-based designer. A composition contract feeds Claude your brand kit, voice, and design context so drafts come out on-brand, then validates them before anything persists.\n- **Send campaigns** to lists and segments, with review, test sends, and an explicit approval step before anything goes live.\n- **Build automation flows** — welcome series, cart abandonment, win-backs — from triggers, waits, and splits.\n- **Send transactional email**: receipts, OTPs, password resets — single recipient, immediate, idempotent.\n- **Import and manage contacts**: CSV imports, segments, tags, lists, and TCPA/GDPR-aware opt-in handling.\n- **Verify sending domains**, configure senders, and read deliverability-aware analytics with trends and benchmarks.\n\nSafety is built in: read-only tools are annotated as such, destructive actions prompt, sends require explicit approval, and large imports hold for review.\n\nThe extension connects to Nitrosend's first-party API (api.nitrosend.com) over OAuth 2.1 with PKCE; an optional API key setting pins the connection to one account for headless-style setups. The live tool catalog from your session is authoritative — account-gated capabilities appear only when your account has them.",
+  "author": {
+    "name": "Nitrosend",
+    "email": "contact@nitrosend.com",
+    "url": "https://github.com/nitrosend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nitrosend/mcp"
+  },
+  "homepage": "https://nitrosend.com",
+  "documentation": "https://docs.nitrosend.com",
+  "support": "https://github.com/nitrosend/mcp/issues",
+  "icon": "icon.png",
+  "server": {
+    "type": "node",
+    "entry_point": "server/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": [
+        "${__dirname}/server/index.js"
+      ],
+      "env": {
+        "NITROSEND_API_KEY": "${user_config.api_key}"
+      }
+    }
+  },
+  "user_config": {
+    "api_key": {
+      "type": "string",
+      "title": "API key (optional)",
+      "description": "Leave empty to sign in with your browser (OAuth) — recommended. Provide a Nitrosend API key (nskey_...) only if you want to pin this extension to one account without browser sign-in.",
+      "sensitive": true,
+      "required": false
+    }
+  },
+  "tools": [
+    {
+      "name": "nitro_get_status",
+      "description": "Get current account context, sender identity, dashboard links, readiness, onboarding status, and recommendations."
+    },
+    {
+      "name": "nitro_select_account",
+      "description": "Switch the current Nitrosend account for this OAuth MCP connection."
+    },
+    {
+      "name": "nitro_select_brand",
+      "description": "Select the current brand for this OAuth MCP connection."
+    },
+    {
+      "name": "nitro_query",
+      "description": "Query any Nitrosend entity."
+    },
+    {
+      "name": "nitro_search_contacts",
+      "description": "Search contacts by email, name, or phone."
+    },
+    {
+      "name": "nitro_set_brand_kit",
+      "description": "Set up Brand Kit identity from website URL or direct fields."
+    },
+    {
+      "name": "nitro_ingest",
+      "description": "Ingest a local or remote asset into Nitrosend-hosted storage and return URLs you can place directly into email design fields."
+    },
+    {
+      "name": "nitro_manage_audience",
+      "description": "Create or update contacts, manage subscriptions, lists, events, segments, and tags."
+    },
+    {
+      "name": "nitro_define_segment",
+      "description": "Define a contact segment with explicit filters and preview."
+    },
+    {
+      "name": "nitro_import_contacts",
+      "description": "Import contacts"
+    },
+    {
+      "name": "nitro_manage_template",
+      "description": "Create, update, or clone a reusable email template."
+    },
+    {
+      "name": "nitro_compose_flow",
+      "description": "Create or replace an automation flow from trigger + steps array."
+    },
+    {
+      "name": "nitro_compose_campaign",
+      "description": "Compose an email or SMS campaign draft."
+    },
+    {
+      "name": "nitro_manage_domains",
+      "description": "Manage sending domains — add, verify, check DNS, list, and remove."
+    },
+    {
+      "name": "nitro_configure_account",
+      "description": "Read or configure sender defaults (from_name, from_email, reply_to) and test email recipients."
+    },
+    {
+      "name": "nitro_review_delivery",
+      "description": "Read-only review of email/SMS content and delivery readiness for templates, flows, and campaigns."
+    },
+    {
+      "name": "nitro_send_test_message",
+      "description": "Send a real test message for an existing template, campaign, or flow step."
+    },
+    {
+      "name": "nitro_control_delivery",
+      "description": "Manage delivery lifecycle for flows and campaigns."
+    },
+    {
+      "name": "nitro_get_insights",
+      "description": "Get email analytics with trends, benchmarks, and recommendations."
+    },
+    {
+      "name": "nitro_configure_providers",
+      "description": "Configure BYO email provider credentials or check provider status."
+    },
+    {
+      "name": "nitro_set_memory",
+      "description": "Read or update the AI memory document."
+    },
+    {
+      "name": "nitro_manage_billing",
+      "description": "Manage subscription billing and the balance used by prepaid features."
+    },
+    {
+      "name": "nitro_send_message",
+      "description": "Send a transactional email or SMS to a single recipient immediately."
+    },
+    {
+      "name": "nitro_request_support",
+      "description": "Submit a support request to the Nitrosend team."
+    },
+    {
+      "name": "nitro_search_docs",
+      "description": "Search the Nitrosend product documentation: guides, integrations, CLI, concepts, authentication, and the REST API and MCP reference."
+    }
+  ],
+  "tools_generated": true,
+  "keywords": [
+    "email",
+    "newsletter",
+    "marketing",
+    "automation",
+    "campaigns",
+    "transactional",
+    "flows",
+    "contacts",
+    "esp",
+    "oauth"
+  ],
+  "license": "MIT",
+  "privacy_policies": [
+    "https://nitrosend.com/privacy"
+  ],
+  "compatibility": {
+    "platforms": [
+      "darwin",
+      "win32",
+      "linux"
+    ],
+    "runtimes": {
+      "node": ">=20.18.1"
+    }
+  }
+}

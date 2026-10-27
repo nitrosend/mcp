@@ -57,6 +57,8 @@ If your Claude organisation restricts directory connectors, ask an organisation 
 https://api.nitrosend.com/mcp
 ```
 
+Prefer a one-click desktop extension? [`mcpb/`](./mcpb/) packages the same remote server as a Claude Desktop extension (`.mcpb`) with browser OAuth. See [mcpb/README.md](./mcpb/README.md) to install or build it.
+
 ---
 
 ### Cursor
