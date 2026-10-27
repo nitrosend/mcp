@@ -99,7 +99,7 @@ for (const name of names) {
   }
   for (const needle of FORBIDDEN) {
     const hit = needle instanceof RegExp ? needle.test(content) : content.includes(needle);
-    if (hit) fail(`forbidden content ${needle} found in ${name}`);
+    if (hit) fail(`forbidden content (${needle instanceof RegExp ? needle : 'a listed string'}) found in ${name}`);
   }
 }
 
