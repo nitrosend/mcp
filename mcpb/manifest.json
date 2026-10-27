@@ -3,7 +3,7 @@
   "manifest_version": "0.3",
   "name": "nitrosend",
   "display_name": "Nitrosend",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "AI-native email from Claude: compose campaigns, build flows, manage contacts, and send.",
   "long_description": "Nitrosend is AI-Native Email: a full email service provider built for the MCP era, where Claude is the interface. Install this extension, sign in once with browser OAuth, and Claude can run your entire email program — no tab-switching, no drag-and-drop editor, no CSV wrangling.\n\nWhat Claude can do with Nitrosend:\n\n- **Compose on-brand emails** with a section-based designer. A composition contract feeds Claude your brand kit, voice, and design context so drafts come out on-brand, then validates them before anything persists.\n- **Send campaigns** to lists and segments, with review, test sends, and an explicit approval step before anything goes live.\n- **Build automation flows** — welcome series, cart abandonment, win-backs — from triggers, waits, and splits.\n- **Send transactional email**: receipts, OTPs, password resets — single recipient, immediate, idempotent.\n- **Import and manage contacts**: CSV imports, segments, tags, lists, and TCPA/GDPR-aware opt-in handling.\n- **Verify sending domains**, configure senders, and read deliverability-aware analytics with trends and benchmarks.\n\nSafety is built in: read-only tools are annotated as such, destructive actions prompt, sends require explicit approval, and large imports hold for review.\n\nThe extension connects to Nitrosend's first-party API (api.nitrosend.com) over OAuth 2.1 with PKCE; an optional API key setting pins the connection to one account for headless-style setups. The live tool catalog from your session is authoritative — account-gated capabilities appear only when your account has them.",
   "author": {
@@ -13,11 +13,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nitrosend/claude"
+    "url": "https://github.com/nitrosend/mcp"
   },
   "homepage": "https://nitrosend.com",
   "documentation": "https://docs.nitrosend.com",
-  "support": "https://github.com/nitrosend/claude/issues",
+  "support": "https://github.com/nitrosend/mcp/issues",
   "icon": "icon.png",
   "server": {
     "type": "node",
