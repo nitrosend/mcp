@@ -9,6 +9,7 @@
 import { createHash } from 'node:crypto';
 import { readFileSync, statSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
+import { homedir } from 'node:os';
 import process from 'node:process';
 
 const MAX_BYTES = 25 * 1024 * 1024;
@@ -22,9 +23,10 @@ const FORBIDDEN = [
   'BEGIN ' + 'RSA PRIVATE KEY',
   'BEGIN ' + 'PRIVATE KEY',
   'BEGIN ' + 'OPENSSH PRIVATE KEY',
-  'testinganthropic' + 'nitrosend',    // directory review account email
-  'repksork',                          // directory review account password
-  '/Users/' + 'georgehartley',         // local home paths
+  homedir(),                          // the packer's own home path
+  // Private values (review-account login and the like) come from
+  // MCPB_VERIFY_FORBIDDEN, comma-separated, so they never live in this repo.
+  ...(process.env.MCPB_VERIFY_FORBIDDEN || '').split(',').map((v) => v.trim()).filter(Boolean),
 ];
 
 const artifact = process.argv[2];
