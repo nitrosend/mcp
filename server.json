@@ -28,7 +28,7 @@
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@nitrosend/mcp",
-      "version": "0.8.2",
+      "version": "0.8.3",
       "transport": {
         "type": "stdio"
       },
