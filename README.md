@@ -1,5 +1,7 @@
 # @nitrosend/mcp
 
+[![smithery badge](https://smithery.ai/badge/nitrosend/nitrosend)](https://smithery.ai/servers/nitrosend/nitrosend)
+
 Optional stdio bridge for [Nitrosend](https://nitrosend.com). Most clients should connect directly to Nitrosend's remote MCP server at `https://api.nitrosend.com/mcp`; this package exists for stdio-only clients and local development.
 
 All plans, including Free, have full access to the generally available Nitrosend MCP/API/CLI surface. Plan limits apply to sending, seats, AI actions and paid add-ons. See [current pricing and allowances](https://nitrosend.com/pricing).
