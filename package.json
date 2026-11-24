@@ -1,7 +1,28 @@
 {
   "name": "@nitrosend/mcp",
-  "version": "0.8.3",
-  "description": "MCP server for Nitrosend — connect Claude to your email marketing platform",
+  "version": "0.8.4",
+  "description": "Nitrosend MCP server: email marketing for AI agents. Newsletters, email campaigns, email automation and transactional emails from Claude, ChatGPT, Cursor and Codex.",
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "email",
+    "email-marketing",
+    "newsletter",
+    "email-automation",
+    "marketing-automation",
+    "transactional-email",
+    "email-api",
+    "email-campaigns",
+    "mailing-list",
+    "ai-agent",
+    "claude",
+    "chatgpt",
+    "cursor",
+    "nitrosend",
+    "mailchimp-alternative",
+    "klaviyo-alternative"
+  ],
   "mcpName": "com.nitrosend/nitrosend",
   "license": "MIT",
   "repository": {
@@ -27,5 +48,6 @@
   "devDependencies": {
     "@types/node": "^22",
     "typescript": "^5.6.0"
-  }
+  },
+  "homepage": "https://nitrosend.com"
 }
