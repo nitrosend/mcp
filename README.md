@@ -1,22 +1,77 @@
-# @nitrosend/mcp
+# Nitrosend MCP Server: email marketing for AI agents
 
-Optional stdio bridge for [Nitrosend](https://nitrosend.com). Most clients should connect directly to Nitrosend's remote MCP server at `https://api.nitrosend.com/mcp`; this package exists for stdio-only clients and local development.
+[Nitrosend](https://nitrosend.com) is an email marketing platform built for AI agents. Connect it to Claude, ChatGPT, Cursor, Codex, VS Code, Windsurf or any MCP client, and your agent writes and sends newsletters, email campaigns, automated email flows and transactional emails, manages your contacts and mailing lists, and reports what worked.
 
-All plans, including Free, have full access to the generally available Nitrosend MCP/API/CLI surface. Plan limits apply to sending, seats, AI actions and paid add-ons. See [current pricing and allowances](https://nitrosend.com/pricing).
+- **Remote MCP server:** `https://api.nitrosend.com/mcp` (Streamable HTTP, OAuth 2.1 sign-in, no API key needed)
+- **Free plan** with full MCP, API and CLI access. See [pricing](https://nitrosend.com/pricing).
+- **Official listings:** [Claude directory](https://claude.ai/directory/nitrosend), [Cursor Marketplace](https://cursor.com/marketplace/nitrosend), [ChatGPT app](https://chatgpt.com/apps/nitrosend---ai-native-email/asdk_app_69c236abbea481918d9180a100abd6b0), Codex app, [Shopify App Store](https://apps.shopify.com/nitrosend), the [Official MCP Registry](https://registry.modelcontextprotocol.io) (`com.nitrosend/nitrosend`)
 
-For Claude Desktop, Claude.ai, and Claude Cowork, use the remote MCP connector
-UI. Do not install `@nitrosend/cli` or this stdio bridge for the standard
-Claude connector setup.
+This repository also ships `@nitrosend/mcp`, an optional stdio bridge for clients that cannot connect to a remote server, and a one-click [Claude Desktop extension](./mcpb/).
 
-Manage contacts, compose emails, build automated flows, and launch campaigns through natural language.
+## What your agent can do
 
-For image media used in templates or campaigns, MCP should orchestrate rather
-than carry large bytes. Small chat-attached images can use `nitro_ingest`
-with `kind=image` and `image_data`; public images can use `image_url` when
-Nitro-hosted permanence is desired; larger local files should call
-`nitro_ingest(upload: {kind: "image", filename, content_type, byte_size, checksum})`,
-PUT bytes to `direct_upload.url`, then pass the returned `signed_id` to
-`nitro_ingest`.
+- **Newsletters and email campaigns:** draft on-brand emails from your Brand Kit, target a list or segment, send a test, then approve and send or schedule. Product launches, promotions, Black Friday sales, weekly newsletters.
+- **Email automation:** build automated flows from triggers, waits and yes/no splits: welcome series, onboarding emails, abandoned cart and browse abandonment, post-purchase, review requests, win-back and re-engagement, drip and nurture sequences.
+- **Transactional email:** send receipts, order confirmations, shipping updates, password resets, magic links and OTP codes, one recipient at a time, with idempotent retries. Use the same templates from the REST API and Node SDK.
+- **Contacts and audience:** import contacts from CSV or inline records, manage subscribers, mailing lists, tags and segments, and keep opt-in and unsubscribe status in order.
+- **Email templates and design:** reusable branded templates, sections, images and a Brand Kit (logo, colours, fonts, sender details, voice).
+- **Deliverability:** verify sending domains (SPF, DKIM, DMARC), set up senders, run spam and readiness checks before anything goes out.
+- **Analytics:** open rate, click rate, unsubscribes and bounces for each campaign and flow, with trends against your own baseline.
+
+Campaigns and flows go live only through an explicit approve step, and Safe Mode makes an agent's campaign sends wait for your approval. Read-only tools are annotated as read-only.
+
+## Example prompts
+
+- "Write this week's newsletter from our last three blog posts and send it to the Subscribers list on Thursday at 9am."
+- "Build a welcome series: a welcome email now, a getting-started email after a day, a customer story after three days."
+- "Set up an abandoned cart flow for our Shopify store with a reminder after one hour and a 10% offer after a day."
+- "Send a password reset email to this user with our transactional template."
+- "Import this CSV of subscribers, tag them `webinar-2026`, and make a segment of everyone who clicked in the last 30 days."
+- "How did last month's email campaigns perform? Which subject lines had the best open rate?"
+
+## Switching from Mailchimp, Klaviyo, beehiiv, Kit, Brevo, MailerLite or Substack
+
+Your agent can move your mailing list and opt-outs over from Mailchimp, Klaviyo, beehiiv, Kit (ConvertKit), Brevo, MailerLite or Substack. Unsubscribes and suppressions go in first, then contacts, lists and tags. Your agent then rebuilds your automations as Nitrosend flows.
+
+## Integrations
+
+- **Shopify:** customers, orders, checkouts and abandoned carts feed flows and segments.
+- **Stripe:** send checkout, purchase and subscription events to the Events API to start flows. A direct Stripe connection is coming soon.
+- **HubSpot and Attio:** sync your CRM contacts into Nitrosend.
+- **Bring your own sender:** send through Nitrosend, or through your own SendGrid, Amazon SES, Postmark, Resend or Mailgun account.
+- **REST API, Node SDK, CLI and Events API:** send transactional email and custom events from your own app.
+
+## Tools
+
+The live tool list from your session is authoritative; some tools only appear when your account has the feature.
+
+| Tool | What it does |
+| --- | --- |
+| `nitro_get_status` | Account, brand, plan and sending readiness |
+| `nitro_query` | Read contacts, lists, segments, campaigns, flows, templates and messages |
+| `nitro_search_contacts` | Find contacts by email, name, tag or field |
+| `nitro_compose_campaign` | Create and edit email campaigns and newsletters |
+| `nitro_compose_flow` | Build automated email flows and sequences |
+| `nitro_manage_template` | Create and edit reusable email templates |
+| `nitro_review_delivery` | Readiness, spam and content checks before sending |
+| `nitro_send_test_message` | Send a test email to yourself |
+| `nitro_control_delivery` | Approve, send, schedule, pause or resume campaigns and flows |
+| `nitro_send_message` | Send one transactional email |
+| `nitro_import_contacts` | Import contacts from CSV or inline records |
+| `nitro_list_import_sources` | List your contact import and sync options, such as Mailchimp, Klaviyo, beehiiv or Shopify |
+| `nitro_prepare_provider_import` / `nitro_get_provider_import` | Prepare a one-time import from another email platform, approved in your browser, and track it |
+| `nitro_manage_audience` | Contacts, mailing lists, tags and bulk changes |
+| `nitro_define_segment` | Create segments from filters |
+| `nitro_get_insights` | Campaign and flow analytics |
+| `nitro_manage_domains` | Add and verify sending domains |
+| `nitro_set_brand_kit` | Logo, colours, fonts, sender details and voice |
+| `nitro_ingest` | Bring in images and files |
+| `nitro_configure_account` / `nitro_configure_providers` | Account settings and connected providers |
+| `nitro_get_setup_link` | Get a browser link to connect an integration (Shopify, HubSpot, Attio) or import contacts |
+| `nitro_get_memory` / `nitro_set_memory` | Notes your agent keeps about your business |
+| `nitro_select_account` / `nitro_select_brand` | Switch account or brand |
+| `nitro_search_docs` / `nitro_request_support` | Search the docs or reach Nitrosend support |
+| `nitro_manage_billing` | Plan and billing details |
 
 ---
 
@@ -182,15 +237,9 @@ Get your API key at **[Settings → API Keys](https://app.nitrosend.com/my/setti
 
 ---
 
-## What you can do
+## Images in templates and campaigns
 
-Once connected, your agent can:
-
-- **Read** — query contacts, segments, flows, campaigns, and account status
-- **Compose** — create emails with sections, build multi-step flows, set up campaigns
-- **Manage** — import contacts, create segments, manage lists and tags
-- **Deliver** — preview emails, run spam checks, send tests, approve and schedule campaigns
-- **Insights** — view open/click/unsubscribe metrics and trends
+MCP should orchestrate image media rather than carry large bytes. Small chat-attached images can use `nitro_ingest` with `kind=image` and `image_data`; public images can use `image_url` when Nitro-hosted permanence is desired; larger local files should call `nitro_ingest(upload: {kind: "image", filename, content_type, byte_size, checksum})`, PUT bytes to `direct_upload.url`, then pass the returned `signed_id` to `nitro_ingest`.
 
 ## Account and brand context
 
