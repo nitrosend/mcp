@@ -4,7 +4,7 @@
 
 - **Remote MCP server:** `https://api.nitrosend.com/mcp` (Streamable HTTP, OAuth 2.1 sign-in, no API key needed)
 - **Free plan** with full MCP, API and CLI access. See [pricing](https://nitrosend.com/pricing).
-- **Official listings:** [Claude directory](https://claude.ai/directory/nitrosend), [Cursor Marketplace](https://cursor.com/marketplace/nitrosend), ChatGPT and Codex apps, [Shopify App Store](https://apps.shopify.com/nitrosend), the [Official MCP Registry](https://registry.modelcontextprotocol.io) (`com.nitrosend/nitrosend`)
+- **Official listings:** [Claude directory](https://claude.ai/directory/nitrosend), [Cursor Marketplace](https://cursor.com/marketplace/nitrosend), [ChatGPT app](https://chatgpt.com/apps/nitrosend---ai-native-email/asdk_app_69c236abbea481918d9180a100abd6b0), Codex app, [Shopify App Store](https://apps.shopify.com/nitrosend), the [Official MCP Registry](https://registry.modelcontextprotocol.io) (`com.nitrosend/nitrosend`)
 
 This repository also ships `@nitrosend/mcp`, an optional stdio bridge for clients that cannot connect to a remote server, and a one-click [Claude Desktop extension](./mcpb/).
 
@@ -18,7 +18,7 @@ This repository also ships `@nitrosend/mcp`, an optional stdio bridge for client
 - **Deliverability:** verify sending domains (SPF, DKIM, DMARC), set up senders, run spam and readiness checks before anything goes out.
 - **Analytics:** open rate, click rate, unsubscribes and bounces for each campaign and flow, with trends against your own baseline.
 
-Every send needs an explicit approval step, and read-only tools are annotated as read-only.
+Campaigns and flows go live only through an explicit approve step, and Safe Mode makes an agent's campaign sends wait for your approval. Read-only tools are annotated as read-only.
 
 ## Example prompts
 
@@ -36,7 +36,7 @@ Your agent can move your mailing list and opt-outs over from Mailchimp, Klaviyo,
 ## Integrations
 
 - **Shopify:** customers, orders, checkouts and abandoned carts feed flows and segments.
-- **Stripe:** purchases, failed payments, subscriptions and trials become events that trigger flows.
+- **Stripe:** send checkout, purchase and subscription events to the Events API to start flows. A direct Stripe connection is coming soon.
 - **HubSpot and Attio:** sync your CRM contacts into Nitrosend.
 - **Bring your own sender:** send through Nitrosend, or through your own SendGrid, Amazon SES, Postmark, Resend or Mailgun account.
 - **REST API, Node SDK, CLI and Events API:** send transactional email and custom events from your own app.
@@ -58,6 +58,8 @@ The live tool list from your session is authoritative; some tools only appear wh
 | `nitro_control_delivery` | Approve, send, schedule, pause or resume campaigns and flows |
 | `nitro_send_message` | Send one transactional email |
 | `nitro_import_contacts` | Import contacts from CSV or inline records |
+| `nitro_list_import_sources` | List your contact import and sync options, such as Mailchimp, Klaviyo, beehiiv or Shopify |
+| `nitro_prepare_provider_import` / `nitro_get_provider_import` | Prepare a one-time import from another email platform, approved in your browser, and track it |
 | `nitro_manage_audience` | Contacts, mailing lists, tags and bulk changes |
 | `nitro_define_segment` | Create segments from filters |
 | `nitro_get_insights` | Campaign and flow analytics |
@@ -65,6 +67,7 @@ The live tool list from your session is authoritative; some tools only appear wh
 | `nitro_set_brand_kit` | Logo, colours, fonts, sender details and voice |
 | `nitro_ingest` | Bring in images and files |
 | `nitro_configure_account` / `nitro_configure_providers` | Account settings and connected providers |
+| `nitro_get_setup_link` | Get a browser link to connect an integration (Shopify, HubSpot, Attio) or import contacts |
 | `nitro_get_memory` / `nitro_set_memory` | Notes your agent keeps about your business |
 | `nitro_select_account` / `nitro_select_brand` | Switch account or brand |
 | `nitro_search_docs` / `nitro_request_support` | Search the docs or reach Nitrosend support |
