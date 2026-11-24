@@ -38,6 +38,7 @@ Your agent can move your mailing list and opt-outs over from Mailchimp, Klaviyo,
 - **Shopify:** customers, orders, checkouts and abandoned carts feed flows and segments.
 - **Stripe:** purchases, failed payments, subscriptions and trials become events that trigger flows.
 - **HubSpot and Attio:** sync your CRM contacts into Nitrosend.
+- **Bring your own sender:** send through Nitrosend, or through your own SendGrid, Amazon SES, Postmark, Resend or Mailgun account.
 - **REST API, Node SDK, CLI and Events API:** send transactional email and custom events from your own app.
 
 ## Tools
