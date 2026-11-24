@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "com.nitrosend/nitrosend",
   "title": "Nitrosend",
-  "description": "Email marketing for AI agents: newsletters, email campaigns, email automation, transactional emails",
+  "description": "AI email marketing MCP: newsletters, drip campaigns, email automation, transactional emails, CRM",
   "version": "0.8.4",
   "websiteUrl": "https://nitrosend.com",
   "icons": [
